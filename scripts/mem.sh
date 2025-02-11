@@ -77,23 +77,24 @@ print_mem() {
 # see `vm_stat` command
 get_mem_usage_osx(){
   
-  local page_size=$(sysctl -nq "vm.pagesize")
-  vm_stat | awk -v page_size=$page_size -F ':' '
-    BEGIN { free=0; used=0 }
+  # local page_size=$(sysctl -nq "vm.pagesize")
+  # vm_stat | awk -v page_size=$page_size -F ':' '
+  #   BEGIN { free=0; used=0 }
     
-    /Pages active/ || 
-    /Pages wired/ { 
-      gsub(/^[ \t]+|[ \t]+$/, "", $2); used+=$2;
-    }
-    /Pages free/ || 
-    /Pages inactive/ || 
-    /Pages speculative/ || 
-    /Pages occupied by compressor/ { 
-      gsub(/^[ \t]+|[ \t]+$/, "", $2); free+=$2;
-    }
+  #   /Pages active/ || 
+  #   /Pages wired/ { 
+  #     gsub(/^[ \t]+|[ \t]+$/, "", $2); used+=$2;
+  #   }
+  #   /Pages free/ || 
+  #   /Pages inactive/ || 
+  #   /Pages speculative/ || 
+  #   /Pages occupied by compressor/ { 
+  #     gsub(/^[ \t]+|[ \t]+$/, "", $2); free+=$2;
+  #   }
 
-    END { print (free * page_size)/1024, (used * page_size)/1024 }
-  '
+  #   END { print (free * page_size)/1024, (used * page_size)/1024 }
+  # '
+	ps -caxm -orss= | awk '{ sum += $1 } END { print (16*1024*1024 - sum), sum }'
 }
 
 # Relies on vmstat, but could also be done with top on FreeBSD
